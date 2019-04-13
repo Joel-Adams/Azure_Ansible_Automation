@@ -3,9 +3,17 @@
     name: "{{azure_name_prefix}}"
     location: "{{azure_region}}"
     tags:
-        Linklight: "This was provisioned through the linklight provisioner"
         Students: "Student Count {{student_total}}"
   register: resource_group
+
+- name: Create Student Resource Groups
+  azure_rm_resourcegroup:
+    name: "Student{{item}}"
+    location: "{{azure_region}}"
+    tags:
+        Students: "Student Count {{student_total}}"
+  with_sequence: start=1 end="{{ student_total }}"
+  register: student_resource_group
 
 - name: Create Azure VPC {{ azure_name_prefix }}-vpc
   azure_rm_virtualnetwork:
@@ -13,7 +21,6 @@
     address_prefixes_cidr: "{{ azure_subnet }}"
     resource_group: "{{azure_name_prefix}}"
     tags:
-        Linklight: "This was provisioned through the linklight provisioner"
         Students: "Student Count {{student_total}}"
   register: create_vpc
   when: azure_vpc_id is undefined
@@ -31,7 +38,6 @@
       - name: 'AllowMultiplePorts'
         protocol: Tcp
         destination_port_range:
-          - 47
           - 443
           - 80
           - 22
@@ -39,8 +45,7 @@
           - 8888
           - 8080
           - 8443
-          - 830
-          - 179
+          - 5000
         access: Allow
         priority: 100
         direction: Inbound

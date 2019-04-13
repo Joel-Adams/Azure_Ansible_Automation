@@ -12,49 +12,6 @@ ssh_port: 22
 azure_control_node:
   ansible: rhel7-tower
 
-azure_lab_node_types:
-  node1: rhel7
-  node2: rhel7
-  node3: rhel7
-
-azure_lab_node_types_f5:
-  f5: f5node
-  host1: rhel7
-
-azure_lab_node_types_networking:
-  rtr1: csr-byol
-  rtr2: csr-byol
-  host1: rhel7
-
-all_cisco:
-  rtr3: csr-byol
-  rtr4: csr-byol
-
-multivendor:
-  rtr3: junos-byol
-  rtr4: junos-byol
-
-# Instance types used for lab configurations
-azure_instance_types:
-  junos-byol:
-    vm_size: Standard_D4s_v3
-    offer: 'vmx-services-gateway-byol'
-    publisher: 'juniper-networks'
-    sku: 'vmx-services-gateway-byol'
-    version: '17.4.3'
-    os_disk_size: 32
-    os: junos
-
-  csr-byol:
-    vm_size: Standard_B2s
-    offer: 'cisco-csr-1000v'
-    publisher: cisco
-    sku: '16_10-byol'
-    version: '16.10.120190108'
-    os_disk_size: 20
-    os: ios
-
-  # Look for owner 309956199498 to find official Red Hat AMIs
   rhel7:
     vm_size: Standard_B1s
     offer: RHEL
@@ -70,24 +27,6 @@ azure_instance_types:
     sku: '7-RAW'
     version: latest
     os_disk_size: 20
-
-  # f5node:
-  #   vm_size: Standard_D2s_v3
-  #   offer: 'f5-big-ip-good'
-  #   publisher: 'f5-networks'
-  #   sku: 'f5-bigip-virtual-edition-25m-good-hourly'
-  #   version: '14.0.001000'
-  #   os_disk_size: 40
-  #   os: f5
-
-  f5node:
-    vm_size: Standard_D2s_v3
-    offer: 'f5-big-ip-byol'
-    publisher: 'f5-networks'
-    sku: 'f5-big-all-2slot-byol'
-    version: '14.1.001000'
-    os_disk_size: 40
-    os: f5
 
 # Login names used for SSH connections. These are baked in to the AMIs.
 azure_login_names:
