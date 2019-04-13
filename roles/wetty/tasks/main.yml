@@ -28,18 +28,18 @@
       -days {{ item.days | default(3650) }}
       -subj "/C={{ item.country | default('') }}/ST={{ item.state | default('') }}/L={{ item.city | default('') }}/O={{ item.organization | default('') }}/OU={{ item.unit | default('') }}/CN={{ item.name }}/emailAddress={{ item.email | default('') }}"
       -newkey rsa:2048
-      -keyout /home/{{ system_user }}/.ssh/privkey.pem
-      -out /home/{{ system_user }}/.ssh/cert.pem
+      -keyout /home/{{ ansible_user }}/.ssh/privkey.pem
+      -out /home/{{ ansible_user }}/.ssh/cert.pem
   args:
-    creates: /home/{{ system_user }}/.ssh/*.pem
+    creates: /home/{{ ansible_user }}/.ssh/*.pem
   with_items: "{{ openssl_self_signed }}"
 
 - name: Set permissions on SSL certs
   become: yes
   file:
-    path:    "/home/{{ system_user }}/.ssh/{{ item }}"
-    group:   "{{ system_user }}"
-    owner:   "{{ system_user }}"
+    path:    "/home/{{ ansible_user }}/.ssh/{{ item }}"
+    group:   "{{ ansible_user }}"
+    owner:   "{{ ansible_user }}"
     mode:    0400
   with_items:
     - cert.pem
@@ -94,19 +94,19 @@
 - name: Create SELinux dir
   become: yes
   file:
-    group: "{{ system_user }}"
-    owner: "{{ system_user }}"
+    group: "{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
     mode:  0700
-    path:  "/home/{{ system_user }}/.selinux"
+    path:  "/home/{{ ansible_user }}/.selinux"
     state: directory
 
 - name: Copy over SELinux modules for Wetty
   become: yes
   copy:
     src:   "{{ item }}"
-    dest:  "/home/{{ system_user }}/.selinux"
-    group: "{{system_user}}"
-    owner: "{{system_user}}"
+    dest:  "/home/{{ ansible_user }}/.selinux"
+    group: "{{ansible_user}}"
+    owner: "{{ansible_user}}"
     mode:  0700
   with_items:
     - wetty.pp
@@ -115,7 +115,7 @@
 
 - name: Update SELinux for Wetty
   become: yes
-  command: semodule -i wetty.pp chdir=/home/{{ system_user }}/.selinux
+  command: semodule -i wetty.pp chdir=/home/{{ ansible_user }}/.selinux
   notify: wetty
   when: result.changed
 
