@@ -1,5 +1,0 @@
-- include_tasks: "{{ special }}.yml"
-  when: special is defined
-
-- include_tasks: networking.yml
-  
