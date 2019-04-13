@@ -27,35 +27,6 @@
     state: latest
   when: not f5workshop
 
-- name: install ncclient for juniper devices (NETWORK AUTOMATION MODE)
-  become: yes
-  pip:
-    name:
-      - ncclient
-    state: latest
-  when: networking
-
-- name: block for f5workshop
-  block:
-    - name: install f5 workshop dependicies
-      become: yes
-      pip:
-        name:
-          - pip
-          - setuptools
-          - pysnow
-        state: latest
-
-    - name: install f5 workshop dependicies
-      become: yes
-      pip:
-        name:
-          - f5-sdk
-          - bigsuds
-          - netaddr
-        state: latest
-  when: f5workshop
-
 - name: Install ansible.cfg and vimrc in home directory
   template:
     src: ansible.cfg.j2
@@ -69,20 +40,6 @@
     dest: "/home/{{ username }}/.vimrc"
     owner: "{{ username }}"
     group: "{{ username }}"
-
-- name: networking mode - setup control node
-  include_tasks: "networking.yml"
-  when: networking
-
-- name: f5 mode - setup control node
-  include_tasks: "networking.yml"
-  when: f5workshop
-
-- name: engine (essentials) mode - setup control node
-  include_tasks: "engine.yml"
-  when:
-    - not networking
-    - not f5workshop
 
 - name: check to see if ansible tower is already up and running
   uri:
@@ -131,7 +88,3 @@
   when:
     - autolicense is defined
     - autolicense
-
-- name: INSTALL VSCODE AND XRDP
-  include_tasks: gui.yml
-  when: xrdp
