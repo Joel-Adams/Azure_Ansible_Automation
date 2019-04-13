@@ -14,7 +14,7 @@ openssl_self_signed:
     days: 3650
 
 
-key_path:   "home/{{ system_user }}/.wetty/privkey.pem"
-cert_path:  "home/{{ system_user }}/.wetty/cert.pem"
+key_path:   "home/{{ ansible_user }}/.wetty/privkey.pem"
+cert_path:  "home/{{ ansible_user }}/.wetty/cert.pem"
 wetty_port:  8888
 wetty_user: "azure-user" # "cockpit"
