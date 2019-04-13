@@ -58,7 +58,7 @@
 
 - name: Configure software on nodes
   become: yes
-  gather_facts: no
+  gather_facts: yes
   hosts: control_nodes
   roles:
     - { role: nodejs }
