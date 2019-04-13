@@ -22,7 +22,3 @@
     groups:
       - control_nodes
   with_items: "{{ ansible_node_facts.vms }}"
-
-- debug: var=groups.managed_nodes
-
-- debug: var=ansible_ssh_pass
