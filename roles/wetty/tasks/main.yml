@@ -62,7 +62,7 @@
   become: yes
   user:
     name:      "azure-user"
-    password:  "{{ workshop_password |password_hash('sha512') }}"
+    password:  "{{ admin_password |password_hash('sha512') }}"
     state:     present
     append:    yes
 
