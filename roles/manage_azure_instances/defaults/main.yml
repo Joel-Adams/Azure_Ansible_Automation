@@ -12,6 +12,7 @@ ssh_port: 22
 azure_control_node:
   ansible: rhel7-tower
 
+azure_instance_types:
   rhel7:
     vm_size: Standard_B1s
     offer: RHEL
