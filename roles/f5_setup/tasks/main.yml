@@ -1,0 +1,46 @@
+#   not working right now, possible bug or mis-use of module
+# - name: Wait for BIG-IP to boot up completely
+#   bigip_wait:
+#     provider:
+#       ssh_keyfile: "{{playbook_dir}}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+#       transport: cli
+#       user: admin
+#       validate_certs: false
+#       server: "{{ ansible_host }}"
+
+# - name: Reboot F5 systems after creation
+#   bigip_command:
+#     provider:
+#       ssh_keyfile: "{{playbook_dir}}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+#       transport: cli
+#       user: admin
+#       server: "{{ ansible_host }}"
+#     commands: reboot
+
+- name: Wait for BIG-IP to boot up completely
+  wait_for:
+    # delay: 300
+    host: "{{ ansible_host }}"
+    port: 8443
+    state: present
+
+- name: Change BIG-IP F5 mgmt password
+  bigip_command:
+    provider:
+      ssh_keyfile: "{{playbook_dir}}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+      transport: cli
+      user: admin
+      server: "{{ ansible_host }}"
+    commands: modify auth user admin password R3dH4t123!
+
+# The bigip_iapplx_package requires rpm installed, on macOS use brew rather than pip or it won't work
+- name: Install AS3
+  bigip_iapplx_package:
+    package: "{{playbook_dir}}/roles/f5_setup/files/f5-appsvcs-3.4.0-2.noarch.rpm"
+    provider:
+      validate_certs: "no"
+      user: admin
+      password: R3dH4t123!
+      # ssh_keyfile: "{{playbook_dir}}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+      server_port: "8443"
+      server: "{{ ansible_host }}"

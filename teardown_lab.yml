@@ -1,0 +1,21 @@
+- name: Destroy lab instances in AWS
+  hosts: localhost
+  connection: local
+  become: no
+  gather_facts: no
+
+  vars:
+    azure_wait: no
+    teardown: true
+    s3_state: absent
+    state: absent
+
+  tasks:
+    - { include_role: {name: manage_azure_instances}}
+    - { include_role: {name: azure_workshop_login_page}, when: create_login_page is defined and create_login_page }
+    - { include_role: {name: azure_dns}, when: create_login_page is defined and create_login_page }
+
+    - name: Remove workshop local files
+      file:
+        dest: "{{ playbook_dir }}/{{ azure_name_prefix }}"
+        state: absent

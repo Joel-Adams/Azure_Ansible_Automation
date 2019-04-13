@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  vars:
+    azure_region: eastus
+    azure_name_prefix: multivendor
+    workshop_dns_zone: "{{workshop_dns_zone}}"
+    storage_state: absent
+  tasks:
+    - name: DNS for student webpage
+      azure_rm_dnsrecordset:
+        state: "{{ dns_state }}"
+        zone_name: "{{workshop_dns_zone}}"
+        records:
+          - entry: "{{azure_name_prefix|lower}}.{{workshop_dns_zone}}"
+        type: CNAME
+        overwrite: yes
+        value: "{{azure_name_prefix|lower}}.{{workshop_dns_zone}}.{{azure_region}}.cloudapp.azure.com"

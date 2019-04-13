@@ -1,0 +1,64 @@
+- name: grab facts for control_nodes
+  azure_rm_virtualmachine_facts:
+    resource_group: "{{azure_name_prefix}}"
+    tags:
+      - Workshop_ansible
+  register: ansible_node_facts
+
+- debug: var=ansible_node_facts
+
+- name: add ansible node to control_nodes and managed_nodes group
+  add_host:
+    name: "{{ item.tags.Name }}"
+    username: "{{ item.tags.Student }}"
+    student: "{{ item.tags.Student }}"
+    short_name: "ansible"
+    ansible_host: "{{ item.tags.public_ip_address }}"
+    ansible_user: "{{ item.tags.Student }}"
+    ansible_port: "{{ ssh_port }}"
+    ansible_ssh_pass: "{{ admin_password }}"
+    ansible_ssh_private_key_file: "{{ playbook_dir }}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+    private_ip: "{{item.tags.private_ip_address}}"
+    groups:
+      - managed_nodes
+      - control_nodes
+  with_items: "{{ ansible_node_facts.vms }}"
+
+- debug: var=groups.managed_nodes
+
+- debug: var=ansible_ssh_pass
+
+- name: grab facts for control_nodes
+  azure_rm_virtualmachine_facts:
+    resource_group: "{{azure_name_prefix}}"
+    tags:
+      - Workshop_loginpage
+  register: ansible_loginpage_facts
+
+- name: add ansible node to login_nodes
+  add_host:
+    name: "{{ item.tags.Name }}"
+    short_name: "ansible"
+    ansible_host: "{{ item.tags.public_ip_address }}"
+    ansible_user: "{{ admin_username }}"
+    ansible_port: "{{ ssh_port }}"
+    ansible_ssh_private_key_file: "{{ playbook_dir }}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+    groups:
+      - login_nodes
+  with_items: "{{ ansible_loginpage_facts.vms }}"
+
+- name: engine (essentials) mode - setup inventory
+  include_tasks: "addhost_engine.yml"
+  when:
+    - not networking
+    - not f5workshop
+
+- name: networking mode - setup inventory
+  include_tasks: "addhost_networking.yml"
+  when:
+    - networking
+    - not f5workshop
+
+- name: f5 mode - setup inventory
+  include_tasks: "addhost_f5.yml"
+  when: f5workshop

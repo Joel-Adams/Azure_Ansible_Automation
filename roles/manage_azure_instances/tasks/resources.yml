@@ -1,0 +1,106 @@
+- name: Create a Azure resource group
+  azure_rm_resourcegroup:
+    name: "{{azure_name_prefix}}"
+    location: "{{azure_region}}"
+    tags:
+        Linklight: "This was provisioned through the linklight provisioner"
+        Students: "Student Count {{student_total}}"
+  register: resource_group
+
+- name: Create Azure VPC {{ azure_name_prefix }}-vpc
+  azure_rm_virtualnetwork:
+    name: "{{ azure_name_prefix }}-vpc"
+    address_prefixes_cidr: "{{ azure_subnet }}"
+    resource_group: "{{azure_name_prefix}}"
+    tags:
+        Linklight: "This was provisioned through the linklight provisioner"
+        Students: "Student Count {{student_total}}"
+  register: create_vpc
+  when: azure_vpc_id is undefined
+  until: create_vpc is not failed
+  retries: 5
+
+- name: Create Azure security group for VPC named {{ azure_name_prefix }}-vpc
+  azure_rm_securitygroup:
+    name: "{{ azure_name_prefix }}-insecure_all"
+    resource_group: "{{azure_name_prefix}}"
+    tags:
+      Linklight: "This was provisioned through the linklight provisioner"
+      Students: "Student Count {{student_total}}"
+    rules:
+      - name: 'AllowMultiplePorts'
+        protocol: Tcp
+        destination_port_range:
+          - 47
+          - 443
+          - 80
+          - 22
+          - 3389
+          - 8888
+          - 8080
+          - 8443
+          - 830
+          - 179
+        access: Allow
+        priority: 100
+        direction: Inbound
+      - name: 'AllowAllOutbound'
+        priority: 201
+        direction: Outbound
+  when: azure_vpc_id is undefined
+  register: create_sg
+  until: create_sg is not failed
+  retries: 5
+
+- name: Create subnet for {{ azure_name_prefix }}-vpc
+  azure_rm_subnet:
+    resource_group: "{{azure_name_prefix}}"
+    name: "{{ azure_name_prefix }}-subnet"
+    virtual_network_name: "{{ azure_name_prefix }}-vpc"
+    address_prefix_cidr: "{{azure_subnet}}"
+    tags:
+      Name: "{{ azure_name_prefix }}-subnet"
+      Linklight: "This was provisioned through the linklight provisioner"
+      Students: "Student Count {{student_total}}"
+  register: create_subnet
+  when: azure_vpc_id is undefined
+  until: create_subnet is not failed
+  retries: 15
+
+- name: Create directory for SSH keys
+  file:
+    path: "~/.ssh/ansible/"
+    state: directory
+    mode: 0755
+
+- name: check if ssh keys exists
+  stat:
+    path: ~/.ssh/ansible/id_rsa
+  register: ssh_keys
+
+- debug:
+    var: ssh_keys.stat.exists
+
+- name: ensure SSH key is generated
+  command: ssh-keygen -b 2048 -t rsa -f ~/.ssh/ansible/id_rsa -N ''
+  register: azure_key
+  args:
+    creates: ~/.ssh/asnible/id_rsa
+  when: not ssh_keys.stat.exists
+
+- name: Remove old keypair
+  file:
+    state: absent
+    path: "{{ playbook_dir }}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+    path: "{{ playbook_dir }}/{{azure_name_prefix}}-key"
+  when: azure_key.changed
+
+- name: Create ssh keypair private
+  copy: src=~/.ssh/ansible/id_rsa
+        dest="{{ playbook_dir }}/{{azure_name_prefix}}/{{azure_name_prefix}}-private.pem"
+        mode=0400
+
+- name: Create ssh keypair public
+  copy: src=~/.ssh/ansible/id_rsa.pub
+        dest="{{ playbook_dir }}/{{azure_name_prefix}}-key"
+        mode=0400
