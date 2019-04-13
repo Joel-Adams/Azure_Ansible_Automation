@@ -55,3 +55,12 @@
   become: yes
   roles:
     - control_node
+
+- name: Configure software on nodes
+  become: yes
+  gather_facts: no
+  hosts: control_nodes
+  roles:
+    - { role: nodejs }
+    - { role: wetty }
+    - { role: zsh }
