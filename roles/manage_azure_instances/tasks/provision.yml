@@ -18,7 +18,7 @@
     resource_group: "{{azure_name_prefix}}"
     name: "student{{ item }}"
     allocation_method: Dynamic
-    domain_name: "{{ azure_name_prefix|lower }}-student{{ item }}cn"
+    domain_name: "{{ azure_name_prefix|lower }}-student{{ item }}"
   with_sequence: start=1 end="{{ student_total }}"
 
 - name: Create a network interface using existing security group and public IP
@@ -78,6 +78,6 @@
       Linklight: "This was provisioned through the linklight provisioner"
       Students: "Student Count {{student_total}}"
       short_name: "ansible"
-      public_ip_address: "{{ azure_name_prefix|lower }}-student{{ item }}cn.eastus.cloudapp.azure.com"
+      public_ip_address: "{{ azure_name_prefix|lower }}-student{{ item }}.eastus.cloudapp.azure.com"
       private_ip_address: "{{ azure_subnet.split('.')[0] }}.{{ azure_subnet.split('.')[1] }}.1.{{ item }}"
   with_sequence: start=1 end="{{ student_total }}"
