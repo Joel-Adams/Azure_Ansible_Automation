@@ -7,7 +7,7 @@
 - name: Create a Azure resource group
   azure_rm_resourcegroup:
     name: "Student{{item}}"
-    location: "{{ region }}"
+    location: "{{ azure_region }}"
     tags:
         Linklight: "This was provisioned through the linklight provisioner"
         Students: "{{ student_total }}"
