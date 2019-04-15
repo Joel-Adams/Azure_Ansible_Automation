@@ -64,3 +64,11 @@
     - { role: nodejs }
     - { role: wetty }
     - { role: zsh }
+
+- name: Configure Azure Users
+  hosts: localhost
+  connection: local
+  become: no
+  gather_facts: no
+  roles:
+    - { role: azure.users }

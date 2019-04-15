@@ -1,0 +1,8 @@
+# file: roles/azure.users/vars/main.yml
+---
+#
+# foo: bar
+subscription_id: 171cb7cb-0b56-4861-b7a7-d7cfad50be90
+client_id: 1c57ab37-14e2-4b99-9005-697ddb144294
+secret: 67631edf-248d-4c06-8431-d21dbae9866d
+tenant: e09fe7ba-2840-4126-b83e-6f8622172287
