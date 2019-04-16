@@ -122,8 +122,8 @@
   with_sequence: start=1 end="{{ student_total }}"
 
 - name: Get all the access keys
-  shell: az ad user show --upn "Student{{item}}@snxcsp.onmicrosoft.com"
-  with_sequence: start=1 end="{{ student_total }}"
+  shell: az ad user show --upn "Student1@snxcsp.onmicrosoft.com"
+  # with_sequence: start=1 end="{{ student_total }}"
   register: student_users
 
 - debug:
