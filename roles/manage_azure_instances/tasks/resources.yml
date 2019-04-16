@@ -122,7 +122,7 @@
   with_sequence: start=1 end="{{ student_total }}"
 
 - name: Get all the access keys
-  shell: Get-AzureADUser -ObjectId "Student{{item}}@snxcsp.onmicrosoft.com"
+  shell: az ad user show --upn "Student{{item}}@snxcsp.onmicrosoft.com"
   with_sequence: start=1 end="{{ student_total }}"
   register: student_users
 
