@@ -109,3 +109,14 @@
   copy: src=~/.ssh/ansible/id_rsa.pub
         dest="{{ playbook_dir }}/{{azure_name_prefix}}-key"
         mode=0400
+
+- name: Create Azure Users
+  azure_ad_users:
+    user_name: "Student{{ item }}"
+    state: present
+    password: "RedHatSNX123!"
+    change_password_onlogin: false
+    tenant_domain: "snxcsp.onmicrosoft.com"
+    client_id: "{{ azure_client_id }}"
+    client_secret: "{{ azure_client_secret }}"
+  with_sequence: start=1 end="{{ student_total }}"
