@@ -15,6 +15,9 @@
   with_sequence: start=1 end="{{ student_total }}"
   register: student_resource_group
 
+- debug:
+    var: student_resource_group
+
 - name: Create Azure VPC {{ azure_name_prefix }}-vpc
   azure_rm_virtualnetwork:
     name: "{{ azure_name_prefix }}-vpc"
@@ -82,9 +85,6 @@
   stat:
     path: ~/.ssh/ansible/id_rsa
   register: ssh_keys
-
-- debug:
-    var: ssh_keys.stat.exists
 
 - name: ensure SSH key is generated
   command: ssh-keygen -b 2048 -t rsa -f ~/.ssh/ansible/id_rsa -N ''
