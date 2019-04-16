@@ -120,3 +120,7 @@
     client_id: "{{ azure_client_id }}"
     client_secret: "{{ azure_client_secret }}"
   with_sequence: start=1 end="{{ student_total }}"
+  register: student_users
+
+- debug:
+    var: student_users
