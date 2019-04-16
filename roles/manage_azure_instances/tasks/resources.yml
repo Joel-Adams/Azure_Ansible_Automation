@@ -120,6 +120,10 @@
     client_id: "{{ azure_client_id }}"
     client_secret: "{{ azure_client_secret }}"
   with_sequence: start=1 end="{{ student_total }}"
+
+- name: Get all the access keys
+  shell: Get-AzureADUser -ObjectId "Student{{item}}@snxcsp.onmicrosoft.com"
+  with_sequence: start=1 end="{{ student_total }}"
   register: student_users
 
 - debug:
