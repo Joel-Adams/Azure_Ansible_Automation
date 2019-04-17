@@ -126,13 +126,3 @@
   shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
   with_sequence: start=1 end="{{ student_total }}"
   when: azure_users.changed
-
-# - name: Set Azure Role Assignments for Users to Resource Groups
-#   azure_rm_resource:
-#     resource_group: "Student{{item}}"
-#     provider: Authorization
-#     resource_type: roleAssignments
-#     resource_name: "Student1@snxcsp.onmicrosoft.com"
-#     api_version: "2017-09-01"
-#     body: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group -g Student{{item}}"
-#   with_sequence: start=1 end="{{ student_total }}"
