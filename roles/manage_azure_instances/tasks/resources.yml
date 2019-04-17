@@ -134,7 +134,7 @@
     resource_group: "Student{{item}}"
     provider: Authorization
     resource_type: roleAssignments
-    resource_name: "Student1@snxcsp.onmicrosoft.com"
+    resource_name: "joela@snxcsp.onmicrosoft.com"
     api_version: "2017-09-01"
     body: "create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor"
   with_sequence: start=1 end="{{ student_total }}"
