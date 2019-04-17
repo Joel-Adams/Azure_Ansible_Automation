@@ -15,8 +15,20 @@
   with_sequence: start=1 end="{{ student_total }}"
   register: student_resource_group
 
-- debug:
-    var: student_resource_group
+# - debug:
+#     var: student_resource_group
+
+- name: Create Azure Users
+  azure_ad_users:
+    user_name: "Student{{ item }}"
+    state: present
+    password: "RedHatSNX123!"
+    change_password_onlogin: false
+    tenant_domain: "snxcsp.onmicrosoft.com"
+    client_id: "{{ azure_client_id }}"
+    client_secret: "{{ azure_client_secret }}"
+  with_sequence: start=1 end="{{ student_total }}"
+  register: azure_users
 
 - name: Create Azure VPC {{ azure_name_prefix }}-vpc
   azure_rm_virtualnetwork:
@@ -110,22 +122,10 @@
         dest="{{ playbook_dir }}/{{azure_name_prefix}}-key"
         mode=0400
 
-- name: Create Azure Users
-  azure_ad_users:
-    user_name: "Student{{ item }}"
-    state: present
-    password: "RedHatSNX123!"
-    change_password_onlogin: false
-    tenant_domain: "snxcsp.onmicrosoft.com"
-    client_id: "{{ azure_client_id }}"
-    client_secret: "{{ azure_client_secret }}"
-  with_sequence: start=1 end="{{ student_total }}"
-  register: azure_users
-
 - name: Set Azure Subscription
   shell: "az account set --subscription {{ azure_subscription_id }}"
 
 - name: Set the Role Assignments for Users
   shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
   with_sequence: start=1 end="{{ student_total }}"
-  # when: azure_users.changed
+  when: azure_users.changed
