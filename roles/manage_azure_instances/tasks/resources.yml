@@ -122,6 +122,9 @@
   with_sequence: start=1 end="{{ student_total }}"
   register: azure_users
 
+- name: Set Azure Subscription
+  shell: "az account set --subscription {{ azure_subscription_id }}"
+
 - name: Set the Role Assignments for Users
   shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
   with_sequence: start=1 end="{{ student_total }}"
