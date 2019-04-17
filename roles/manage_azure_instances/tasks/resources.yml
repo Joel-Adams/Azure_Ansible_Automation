@@ -129,5 +129,3 @@
   shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
   with_sequence: start=1 end="{{ student_total }}"
   when: azure_users.changed
-  retries: 10
-  delay: 30
