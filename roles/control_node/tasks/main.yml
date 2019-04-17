@@ -14,7 +14,7 @@
       - tree
       - sshpass
       - tmux
-      - python-pip
+      # - python-pip
       - https://releases.ansible.com/ansible/rpm/release/epel-7-x86_64/ansible-2.7.0-1.el7.ans.noarch.rpm
     state: present
   retries: 10
@@ -25,7 +25,6 @@
     name:
       - python-netaddr
     state: latest
-  when: not f5workshop
 
 - name: Install ansible.cfg and vimrc in home directory
   template:
@@ -108,3 +107,24 @@
 - name: restart firewalld
   become: yes
   service: name=firewalld state=restarted
+
+- name: Install pip
+  easy_install:
+    name: pip==8.1.2
+
+- name: Install Ansible Azure Requirements
+  pip:
+    name: ansible[azure]
+
+- name: Import Azure RMP keys
+  rpm_key:
+    state: present
+    key: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Execute the shell command for Azure CLI
+  shell: echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/azure-cli.repo
+
+- name: Install Azure CLI
+  yum:
+    name: azure-cli
+    state: latest
