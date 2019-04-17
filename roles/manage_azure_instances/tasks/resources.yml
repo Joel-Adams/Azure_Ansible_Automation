@@ -121,9 +121,9 @@
     client_secret: "{{ azure_client_secret }}"
   with_sequence: start=1 end="{{ student_total }}"
 
-- name: Get all the access keys
-  shell: az ad user show --upn "Student1@snxcsp.onmicrosoft.com"
-  # with_sequence: start=1 end="{{ student_total }}"
+- name: Set the Role Assignments for Users
+  shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group -g Student{{item}}"
+  with_sequence: start=1 end="{{ student_total }}"
   register: student_users
 
 - debug:
@@ -136,5 +136,5 @@
 #     resource_type: roleAssignments
 #     resource_name: "Student1@snxcsp.onmicrosoft.com"
 #     api_version: "2017-09-01"
-#     body: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor"
+#     body: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group -g Student{{item}}"
 #   with_sequence: start=1 end="{{ student_total }}"
