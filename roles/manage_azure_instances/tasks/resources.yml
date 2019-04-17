@@ -122,7 +122,7 @@
   with_sequence: start=1 end="{{ student_total }}"
 
 - name: Set the Role Assignments for Users
-  shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group -g Student{{item}}"
+  shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
   with_sequence: start=1 end="{{ student_total }}"
 
 # - name: Set Azure Role Assignments for Users to Resource Groups
