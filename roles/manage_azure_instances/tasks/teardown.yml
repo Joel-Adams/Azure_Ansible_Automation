@@ -1,57 +1,32 @@
-- name: grab facts for workshop
-  azure_rm_virtualmachine_facts:
-    resource_group: "{{azure_name_prefix}}"
-    tags:
-      - Workshop
-  register: all_workshop_nodes
+# - name: grab facts for workshop
+#   azure_rm_virtualmachine_facts:
+#     resource_group: "{{azure_name_prefix}}"
+#     tags:
+#       - Workshop
+#   register: all_workshop_nodes
+#
+# - name: debug test
+#   debug:
+#     var: all_workshop_nodes
 
-- name: debug test
-  debug:
-    var: all_workshop_nodes
-
-- name: destroy Azure instances
-  azure_rm_virtualmachine:
-    resource_group: "{{azure_name_prefix}}"
-    state: absent
-    name: "{{ all_workshop_nodes.instances | map(attribute='name') | list }}"
-  register: result
-  when: all_workshop_nodes.instances
-
-- name: use set fact for easier variables
-  set_fact:
-    azure_vpc_id: "{{vpc_net_facts.vpcs[0].id}}"
-    azure_security_group: "{{ azure_name_prefix }}-insecure_all"
-  when: vpc_net_facts.vpcs|length > 0 and azure_security_group is undefined
-
-- name: set variables for instance creation dynamically since VPC was not supplied by user (NETWORKING MODE)
-  set_fact:
-    azure_vpc_id2: "{{vpc_net_facts2.vpcs[0].id}}"
-    azure_security_group2: "{{ azure_name_prefix }}-insecure_all2"
-  when:
-    - networking
-    - vpc_net_facts2.vpcs|length > 0
-    - azure_security_group2 is undefined
-
-- name: Deleted Azure security group for VPC vpc-{{ azure_name_prefix }}
-  azure_rm_securitygroup:
-    name: "{{ azure_name_prefix }}-insecure_all"
-    resource_group: "{{azure_name_prefix}}"
-    state: absent
-  register: delete_sg
-  until: delete_sg is not failed
-  retries: 50
-
-- name: Delete subnet for {{ azure_name_prefix }}-vpc
-  azure_rm_subnet:
-    resource_group: "{{azure_name_prefix}}"
-    name: "{{ azure_name_prefix }}-subnet"
-    virtual_network_name: "{{ azure_name_prefix }}-vpc"
-    cidr: "{{azure_subnet}}"
+- name: Destroy Azure Resource Group
+  azure_rm_resourcegroup:
+    name: "{{azure_name_prefix}}"
+    location: "{{azure_region}}"
     state: absent
 
-- name: delete Azure VPC {{ azure_name_prefix }}
-  azure_rm_virtualnetwork:
-    name: "{{ azure_name_prefix }}-vpc"
-    address_prefixes_cidr: "{{ azure_subnet }}"
-    resource_group: "{{azure_name_prefix}}"
+- name: Destroy Student Resource Groups
+  azure_rm_resourcegroup:
+    name: "Student{{item}}"
+    location: "{{azure_region}}"
     state: absent
+  with_sequence: start=1 end="{{ student_total }}"
+
+- name: Destroy Student Azure Users
+  azure_ad_users:
+    user_name: "Student{{ item }}"
+    state: absent
+    tenant_domain: "snxcsp.onmicrosoft.com"
+    client_id: "{{ azure_client_id }}"
+    client_secret: "{{ azure_client_secret }}"
+  with_sequence: start=1 end="{{ student_total }}"
