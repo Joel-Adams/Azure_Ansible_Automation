@@ -14,12 +14,14 @@
     name: "{{azure_name_prefix}}"
     location: "{{azure_region}}"
     state: absent
+    force: yes
 
 - name: Destroy Student Resource Groups
   azure_rm_resourcegroup:
     name: "Student{{item}}"
     location: "{{azure_region}}"
     state: absent
+    force: yes
   with_sequence: start=1 end="{{ student_total }}"
 
 - name: Destroy Student Azure Users
