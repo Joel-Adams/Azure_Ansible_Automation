@@ -2,7 +2,7 @@
   azure_rm_virtualmachine_facts:
     resource_group: "{{azure_name_prefix}}"
     tags:
-      - Workshop:"{{azure_name_prefix}}"
+      - Workshop
   register: all_workshop_nodes
 
 - name: debug test
