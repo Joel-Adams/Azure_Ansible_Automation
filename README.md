@@ -4,11 +4,9 @@
 # Table Of Contents
 - [Requirements](#requirements)
 - [Lab Setup](#lab-setup)
-  - [One Time Setup](#one-time-setup)
   - [Setup (per workshop)](#setup-per-workshop)
   - [Accessing student documentation and slides](#Accessing-student-documentation-and-slides)
 - [Lab Teardown](#azure-teardown)
-- [FAQ](../docs/faq.md)
 
 # Requirements
 - This provisioner must be run with Ansible Engine v2.8.0 or higher.
