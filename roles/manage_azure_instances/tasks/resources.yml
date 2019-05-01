@@ -114,8 +114,8 @@
         dest="{{ playbook_dir }}/{{azure_name_prefix}}-key"
         mode=0400
 
-- name: Set Azure Subscription
-  shell: "az account set --subscription {{ azure_subscription_id }}"
+# - name: Set Azure Subscription
+#   shell: "az account set --subscription {{ azure_subscription_id }}"
 
 - name: Set the Role Assignments for Users
   shell: "az role assignment create --assignee Student{{item}}@snxcsp.onmicrosoft.com --role Contributor --resource-group Student{{item}}"
