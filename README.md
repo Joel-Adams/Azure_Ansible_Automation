@@ -24,18 +24,14 @@
 azure_region: eastus                   # region where the nodes will live
 azure_name_prefix: TESTWORKSHOP        # name prefix for all the VMs
 student_total: 2                       # creates student_total of workbenches for the workshop
+domain_name:                           # to create the DNS names in Azure. For example the eastus region would be 'eastus.cloudapp.azure.com'
 azure_subscription_id:
 azure_client_id:
 azure_client_secret:
 azure_tenant_id:
-#OPTIONAL VARIABLES
 admin_password: RedHat123!             # password for Ansible control node, defaults to ansible
-networking: true                       # Set this if you want the workshop in networking mode
-create_login_page: true                # creates Azure website for azure_name_prefix.workshop_dns_zone
-workshop_dns_zone: rhdemo.io           # Sets the DNS zone to use for the website
 towerinstall: true                     # automatically installs Tower to control node
-#autolicense: true                     # automatically licenses Tower if license is provided
-#xrdp: true                            # install xrdp with xfce for graphical interface
+autolicense: false                     # automatically licenses Tower if license is provided
 ```
 
 If you want to license it you must copy a license called tower_license.json into this directory.  If you do not have a license already please request one using the [Workshop License Link](https://www.ansible.com/workshop-license).
