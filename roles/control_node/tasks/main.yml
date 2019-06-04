@@ -26,6 +26,11 @@
       - python-netaddr
     state: latest
 
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
 - name: Install ansible.cfg and vimrc in home directory
   template:
     src: ansible.cfg.j2
